@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+struct FavoriteNewsModel {
+    var items: [Favorites] = []
+}
