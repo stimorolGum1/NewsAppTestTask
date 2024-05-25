@@ -23,15 +23,15 @@ extension UIImageView {
             return
         }
         
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             if let data = data, let downloadedImage = UIImage(data: data) {
                 imageCache.setObject(downloadedImage, forKey: urlString as NSString)
                 DispatchQueue.main.async {
-                    self.image = downloadedImage
+                    self?.image = downloadedImage
                 }
             } else {
                 DispatchQueue.main.async {
-                    self.image = UIImage(systemName: "questionmark.app")
+                    self?.image = UIImage(systemName: "questionmark.app")
                 }
             }
         }.resume()

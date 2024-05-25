@@ -12,7 +12,7 @@ class NetworkManager {
     
     func fetchData(completion: @escaping (Result<Data, Error>) -> Void) {
         guard let url = URL(string: "https://newsdata.io/api/1/latest?apikey=\(token)") else { return }
-        URLSession.shared.dataTask(with: url, completionHandler: {data, response, error in
+        URLSession.shared.dataTask(with: url) {data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
                     completion(.failure(error))
@@ -22,12 +22,12 @@ class NetworkManager {
                     completion(.success(data))
                 }
             }
-        }).resume()
+        }.resume()
     }
     
     func fetchPaginationData(page: String,completion: @escaping (Result<Data, Error>) -> Void) {
         guard let url = URL(string: "https://newsdata.io/api/1/latest?apikey=\(token)&page=\(page)") else { return }
-        URLSession.shared.dataTask(with: url, completionHandler: {data, response, error in
+        URLSession.shared.dataTask(with: url) {data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
                     completion(.failure(error))
@@ -37,7 +37,7 @@ class NetworkManager {
                     completion(.success(data))
                 }
             }
-        }).resume()
+        }.resume()
     }
 }
 

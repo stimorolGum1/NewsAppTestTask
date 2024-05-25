@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class FavoriteViewController: UIViewController {
     
     let tableCell = "favoriteCell"
@@ -21,17 +22,14 @@ class FavoriteViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        favoriteTableView.delegate = self
-        favoriteTableView.dataSource = self
-        favoriteTableView.register(FavoriteCell.self, forCellReuseIdentifier: tableCell)
         setupViews()
         setupConstraints()
-        presenter?.fetchDataFromFavorites()
+        setupTableView()
+        presenter?.fetchDataFromFavoritesStorage()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        presenter?.fetchDataFromFavorites()
-        reloadTable()
+        presenter?.fetchDataFromFavoritesStorage()
     }
     
     func setupViews() {
@@ -46,6 +44,13 @@ class FavoriteViewController: UIViewController {
             favoriteTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
     }
+    
+    func setupTableView() {
+        favoriteTableView.delegate = self
+        favoriteTableView.dataSource = self
+        favoriteTableView.register(FavoriteCell.self, forCellReuseIdentifier: tableCell)
+    }
+    
     func reloadTable() {
         favoriteTableView.reloadData()
     }
@@ -57,24 +62,27 @@ extension FavoriteViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return presenter?.prepareCountOfData() ?? 0
+        return presenter?.numberOfRowsInSection() ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: tableCell, for: indexPath) as! FavoriteCell
-        cell.imageNews.loadImage(urlString: presenter?.prepareData(index: indexPath.row).image ?? "")
-        cell.authorLabel.text = presenter?.prepareAuthor(index: indexPath.row)
-        cell.dateLabel.text = presenter?.prepareData(index: indexPath.row).date
-        cell.discribeLabel.text = presenter?.prepareDescription(index: indexPath.row)
+        cell.newsImage.loadImage(urlString: presenter?.dataAtRow(index: indexPath.row).image ?? "")
+        cell.authorLabel.text = presenter?.authorAtRow(index: indexPath.row)
+        cell.dateLabel.text = presenter?.dataAtRow(index: indexPath.row).date
+        cell.discribeLabel.text = presenter?.descriptionAtRow(index: indexPath.row)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let detailVC = Builder().makeDetail(isHide: true, data: DetailModel(date: presenter?.prepareData(index: indexPath.row).date,
-                                                                            author: presenter?.prepareAuthor(index: indexPath.row),
-                                                              image: presenter?.prepareData(index: indexPath.row).image ?? "",
-                                                              description: presenter?.prepareDescription(index: indexPath.row),
-                                                              link: presenter?.prepareData(index: indexPath.row).link))
-        self.present(detailVC, animated: true)
+        let detailVC = Builder().makeDetailScreen(popViewController: presenter,
+                                            isHide: true,
+                                            data: DetailModel(newsID: presenter?.dataAtRow(index: indexPath.row).objectID,
+                                                                            date: presenter?.dataAtRow(index: indexPath.row).date,
+                                                                            author: presenter?.authorAtRow(index: indexPath.row),
+                                                              image: presenter?.dataAtRow(index: indexPath.row).image ?? "",
+                                                              description: presenter?.descriptionAtRow(index: indexPath.row),
+                                                              link: presenter?.dataAtRow(index: indexPath.row).link))
+        present(detailVC, animated: true)
     }
 }

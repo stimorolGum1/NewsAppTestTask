@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
         let builder = Builder()
         let tabbar = NewsAppTabBar()
-        let tabs = [builder.makeNews(), builder.makeFavorite()]
+        let tabs = [builder.makeNewsScreen(), builder.makeFavoriteScreen()]
         tabbar.viewControllers = tabs
         window?.rootViewController = tabbar
         window?.makeKeyAndVisible()

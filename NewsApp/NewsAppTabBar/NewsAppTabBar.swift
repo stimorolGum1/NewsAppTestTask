@@ -14,7 +14,5 @@ class NewsAppTabBar: UITabBarController {
         view.backgroundColor = .white
         
     }
-
-
 }
 

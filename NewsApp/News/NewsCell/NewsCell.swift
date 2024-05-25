@@ -9,7 +9,7 @@ import UIKit
 
 class NewsCell: UITableViewCell {
     
-    lazy var imageNews: UIImageView = {
+    lazy var newsImage: UIImageView = {
         let image = UIImageView()
         image.contentMode = .scaleAspectFit
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -39,7 +39,6 @@ class NewsCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
         setupConstraints()
-        
     }
     
     required init?(coder: NSCoder) {
@@ -47,7 +46,7 @@ class NewsCell: UITableViewCell {
     }
     
     func setupViews() {
-        contentView.addSubview(imageNews)
+        contentView.addSubview(newsImage)
         contentView.addSubview(authorLabel)
         contentView.addSubview(dateLabel)
         contentView.addSubview(discribeLabel)
@@ -55,23 +54,23 @@ class NewsCell: UITableViewCell {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            imageNews.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 10),
-            imageNews.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            imageNews.heightAnchor.constraint(equalToConstant: 40),
-            imageNews.widthAnchor.constraint(equalToConstant: 40),
+            newsImage.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 10),
+            newsImage.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            newsImage.heightAnchor.constraint(equalToConstant: 40),
+            newsImage.widthAnchor.constraint(equalToConstant: 40),
             
             authorLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 10),
-            authorLabel.leadingAnchor.constraint(equalTo: imageNews.trailingAnchor, constant: 10),
+            authorLabel.leadingAnchor.constraint(equalTo: newsImage.trailingAnchor, constant: 10),
             authorLabel.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             authorLabel.heightAnchor.constraint(equalToConstant: 20),
             
             dateLabel.topAnchor.constraint(equalTo: authorLabel.bottomAnchor, constant: 5),
-            dateLabel.leadingAnchor.constraint(equalTo: imageNews.trailingAnchor, constant: 10),
+            dateLabel.leadingAnchor.constraint(equalTo: newsImage.trailingAnchor, constant: 10),
             dateLabel.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             dateLabel.heightAnchor.constraint(equalToConstant: 20),
             
             discribeLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 5),
-            discribeLabel.leadingAnchor.constraint(equalTo: imageNews.trailingAnchor, constant: 10),
+            discribeLabel.leadingAnchor.constraint(equalTo: newsImage.trailingAnchor, constant: 10),
             discribeLabel.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             discribeLabel.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -10)
         ])

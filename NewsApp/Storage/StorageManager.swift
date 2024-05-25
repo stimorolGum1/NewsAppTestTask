@@ -33,7 +33,7 @@ class StorageManager {
                          descriptionNews: String,
                          image: String,
                          link: String,
-                         date: String) {
+                         date: String, completion: @escaping (String) -> Void) {
         let file = Favorites(context: context)
         file.author = author
         file.descriptionNews = descriptionNews
@@ -43,36 +43,33 @@ class StorageManager {
         if context.hasChanges {
             do {
                 try context.save()
+                completion("Успешно добавлено в избранное")
             } catch {
                 context.rollback()
             }
         }
     }
     
-    func deleteFromFavorites(link: String) {
-        let fetchRequest: NSFetchRequest<Favorites> = Favorites.fetchRequest()
+    func deleteFromFavoritesNews(id: NSManagedObjectID, completion: @escaping (String) -> Void) {
         do {
-            let results = try context.fetch(fetchRequest)
-            for object in results {
-                if object.link == link {
-                    context.delete(object)
-                }
-            }
+            let object = try context.existingObject(with: id)
+            context.delete(object)
             if context.hasChanges {
                 try context.save()
+                completion("Успешно удалено из избранного")
             }
         } catch {
             context.rollback()
         }
     }
     
-    func fetchFiles(completion: @escaping ([Favorites]?) -> Void) {
-            let fetchRequest: NSFetchRequest<Favorites> = Favorites.fetchRequest()
-            do {
-                let fetchedData = try context.fetch(fetchRequest)
-                completion(fetchedData)
-            } catch {
-                completion(nil)
-            }
+    func fetchFavoritesNews(completion: @escaping ([Favorites]?) -> Void) {
+        let fetchRequest: NSFetchRequest<Favorites> = Favorites.fetchRequest()
+        do {
+            let fetchedData = try context.fetch(fetchRequest)
+            completion(fetchedData)
+        } catch {
+            completion(nil)
         }
+    }
 }

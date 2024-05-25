@@ -12,6 +12,13 @@ class DetailViewController: UIViewController {
     var presenter: DetailPresenter?
     var isfavoriteButtonHide: Bool?
     
+    lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
     lazy var newsImage: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -36,7 +43,8 @@ class DetailViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    lazy var favoriteButton: UIButton = {
+    
+    lazy var addToFavoriteButton: UIButton = {
         let button = UIButton()
         button.setTitle("Добавить в избранное", for: .normal)
         button.addTarget(self, action: #selector(addToFavorite), for: .touchUpInside)
@@ -45,7 +53,7 @@ class DetailViewController: UIViewController {
         return button
     }()
     
-    lazy var removeFavoriteButton: UIButton = {
+    lazy var removeFromFavoriteButton: UIButton = {
         let button = UIButton()
         button.setTitle("Убрать из избранного", for: .normal)
         button.addTarget(self, action: #selector(removeFromFavorite), for: .touchUpInside)
@@ -61,60 +69,75 @@ class DetailViewController: UIViewController {
         setupConstraints()
         presenter?.setData()
         if isfavoriteButtonHide == true {
-            favoriteButton.isHidden = true
+            addToFavoriteButton.removeFromSuperview()
         } else {
-            removeFavoriteButton.isHidden = true
+            removeFromFavoriteButton.removeFromSuperview()
         }
     }
     
     func setupViews() {
-        view.addSubview(authorLabel)
-        view.addSubview(newsImage)
-        view.addSubview(descriptionLabel)
-        view.addSubview(sourceLabel)
-        view.addSubview(favoriteButton)
-        view.addSubview(removeFavoriteButton)
+        view.addSubview(scrollView)
+        scrollView.addSubview(newsImage)
+        scrollView.addSubview(authorLabel)
+        scrollView.addSubview(descriptionLabel)
+        scrollView.addSubview(sourceLabel)
+        scrollView.addSubview(addToFavoriteButton)
+        scrollView.addSubview(removeFromFavoriteButton)
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            newsImage.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 0),
-            newsImage.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 0),
-            newsImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            scrollView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            scrollView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            newsImage.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            newsImage.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            newsImage.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
+            newsImage.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -15),
             newsImage.heightAnchor.constraint(equalToConstant: 150),
             
             authorLabel.topAnchor.constraint(equalTo: newsImage.bottomAnchor, constant: 10),
-            authorLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            authorLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
-            authorLabel.heightAnchor.constraint(equalToConstant: 20),
+            authorLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            authorLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
+            authorLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -15),
             
             descriptionLabel.topAnchor.constraint(equalTo: authorLabel.bottomAnchor, constant: 10),
-            descriptionLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            descriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
-            descriptionLabel.heightAnchor.constraint(equalToConstant: 200),
+            descriptionLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            descriptionLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
+            descriptionLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -15),
             
             sourceLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 10),
-            sourceLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            sourceLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
-            sourceLabel.heightAnchor.constraint(equalToConstant: 20),
+            sourceLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            sourceLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
+            sourceLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -15),
             
-            favoriteButton.topAnchor.constraint(equalTo: sourceLabel.bottomAnchor, constant: 10),
-            favoriteButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            favoriteButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
-            favoriteButton.heightAnchor.constraint(equalToConstant: 20),
+            addToFavoriteButton.topAnchor.constraint(equalTo: sourceLabel.bottomAnchor, constant: 10),
+            addToFavoriteButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            addToFavoriteButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
+            addToFavoriteButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -15),
+            addToFavoriteButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             
-            removeFavoriteButton.topAnchor.constraint(equalTo: favoriteButton.bottomAnchor, constant: 10),
-            removeFavoriteButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            removeFavoriteButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
-            removeFavoriteButton.heightAnchor.constraint(equalToConstant: 20)
+            removeFromFavoriteButton.topAnchor.constraint(equalTo: sourceLabel.bottomAnchor, constant: 10),
+            removeFromFavoriteButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            removeFromFavoriteButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
+            removeFromFavoriteButton.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -15),
+            removeFromFavoriteButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
         ])
     }
-    
+
     @objc func addToFavorite() {
         presenter?.addToFavoritesStorage()
     }
     
     @objc func removeFromFavorite() {
-        presenter?.removeFromFavorite()
+        presenter?.removeFromFavoriteStorage()
+    }
+    
+    func showAlert(title: String) {
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default))
+        self.present(alert, animated: true)
     }
 }

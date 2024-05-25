@@ -12,7 +12,7 @@ class NewsPresenter {
     weak var view: NewsViewController?
     let networkManager: NetworkManager
     var model: NewsModel
-    let decoder = JSONDecoder()
+    let jsonDecoder = JSONDecoder()
     var nextPage: String = ""
     
     init(view: NewsViewController, networkManager: NetworkManager, model: NewsModel) {
@@ -21,22 +21,24 @@ class NewsPresenter {
         self.model = model
     }
     
-    func prepareCountOfData() -> Int {
+    func numberOfRowsInSection() -> Int {
         return model.items.count
     }
     
-    func prepareData(index: Int) -> NewsArticle {
+    func dataAtRow(index: Int) -> NewsArticle {
         return self.model.items[index]
     }
     
-    func prepareAuthor(index: Int) -> String {
-        guard let creator = self.model.items[index].creator, let firstCreator = creator.first, !firstCreator.isEmpty else {
+    func authorAtRow(index: Int) -> String {
+        guard let creator = self.model.items[index].creator,
+              let firstCreator = creator.first,
+              !firstCreator.isEmpty else {
             return "No author"
         }
         return firstCreator
     }
     
-    func prepareDescription(index: Int) -> String {
+    func descriptionAtRow(index: Int) -> String {
         guard let description = self.model.items[index].description else {
             return "No Description"
         }
@@ -52,8 +54,7 @@ class NewsPresenter {
         if let date = dateFormatter.date(from: date) {
             dateFormatter.dateFormat = neededFormat
             return dateFormatter.string(from: date)
-        }
-        else {
+        } else {
             return "No Date"
         }
     }
@@ -63,16 +64,15 @@ class NewsPresenter {
             switch result {
             case .success(let data):
                 do {
-                    let jsonData = try self?.decoder.decode(NewsResponse.self, from: data)
+                    let jsonData = try self?.jsonDecoder.decode(NewsResponse.self, from: data)
                     self?.model.items = jsonData?.results ?? []
                     self?.nextPage = jsonData?.nextPage ?? ""
                     self?.view?.reloadTable()
                 } catch {
-                    print(error)
+                    fatalError()
                 }
-                
             case .failure(let error):
-                print(error)
+                fatalError(error.localizedDescription)
             }
         }
     }
@@ -83,16 +83,15 @@ class NewsPresenter {
                 switch result {
                 case .success(let data):
                     do {
-                        let jsonData = try self?.decoder.decode(NewsResponse.self, from: data)
+                        let jsonData = try self?.jsonDecoder.decode(NewsResponse.self, from: data)
                         self?.model.items.append(contentsOf: jsonData?.results ?? [])
                         self?.nextPage = jsonData?.nextPage ?? ""
                         self?.view?.reloadTable()
                     } catch {
-                        print(error)
+                        fatalError()
                     }
-                    
                 case .failure(let error):
-                    print(error)
+                    fatalError(error.localizedDescription)
                 }
             }
         }

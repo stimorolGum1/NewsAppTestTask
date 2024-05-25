@@ -6,11 +6,14 @@
 //
 
 import Foundation
+import CoreData
 
 struct DetailModel {
+    let newsID: NSManagedObjectID?
     let date: String?
     let author: String?
     let image: String?
     let description: String?
     let link: String?
 }
+
